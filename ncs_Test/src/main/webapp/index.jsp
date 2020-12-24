@@ -7,6 +7,7 @@
 <title>index</title>
 </head>
 <body>
+<h1>안녕하세요</h1> 
 <h1><a href="./home.do">글목록 이동 (home.do)</a></h1>
 <h1><a href="./hello.do">글목록 이동 (hello.do)</a></h1>
 

@@ -16,9 +16,75 @@
       ORDER BY REFER DESC, STEP
    </select>
 
-  
 
+
+  <select id="getOneBoard" parameterType="java.lang.String"
+		resultType="ADto">
+		SELECT SEQ, ID, TITLE, CONTENT, READCOUNT, DELFLAG, REGDATE
+		FROM ANSWERBOARD a
+		WHERE SEQ =#{seq}
+	</select>
+
+	<update id="modifyBoard" parameterType="ADto">
+		UPDATE ANSWERBOARD
+		SET TITLE =#{title}, CONTENT =#{content}
+		WHERE SEQ =#{seq}
+	</update>
    
-	
+	<update id="delflagBoard" parameterType="java.util.Map">
+		UPDATE ANSWERBOARD SET DELFLAG ='Y'
+		WHERE DELFLAG ='N'
+		AND SEQ IN
+		<foreach item="seq" collection="seqs" open="(" separator="," close=")">
+			         #{seq}
+		</foreach> 
+	</update>
 
+	
+	
+	<update id="replyBoardUp" parameterType="ADto">
+		UPDATE ANSWERBOARD SET STEP = STEP +1
+		WHERE STEP > (SELECT STEP FROM ANSWERBOARD a WHERE SEQ = #{seq})
+		AND REFER = (SELECT REFER FROM ANSWERBOARD a2 WHERE SEQ=#{seq})
+	</update>
+
+	<insert id="replyBoardIn" parameterType="ADto">
+		INSERT INTO ANSWERBOARD
+		(SEQ, ID, TITLE,
+		CONTENT,
+		REFER,
+		STEP,
+		"DEPTH",
+		READCOUNT, DELFLAG,
+		REGDATE)
+		VALUES
+		(
+		ANSWERBOARD_SEQ.NEXTVAL, #{id}, #{title},
+		#{content},
+		(SELECT REFER FROM ANSWERBOARD a WHERE SEQ=#{seq}),
+		(SELECT STEP FROM ANSWERBOARD a2 WHERE SEQ=#{seq})+1,
+		(SELECT "DEPTH" FROM ANSWERBOARD a3 WHERE SEQ=#{seq})+1,
+		0, 'N',
+		SYSDATE
+		)
+	</insert>
+	
+	<insert id="writeBoard" parameterType="ADto">
+		<selectKey keyProperty="seq" resultType="java.lang.String" order="BEFORE">
+			SELECT ANSWERBOARD_SEQ.NEXTVAL AS SEQ FROM DUAL
+		</selectKey>
+		
+		INSERT INTO ANSWERBOARD
+		(SEQ, ID, TITLE,
+		CONTENT, REFER, STEP,
+		"DEPTH", READCOUNT, DELFLAG,
+		REGDATE)
+		VALUES(#{seq}, #{id}, #{title},
+		#{content}, (SELECT NVL(MAX(REFER),0)+1 FROM ANSWERBOARD a), 0,
+		0, 0, 'N',
+		SYSDATE)
+		
+	</insert>
+	
+	
 </mapper>

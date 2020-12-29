@@ -27,7 +27,7 @@ public class AnswerBoard_CTRL {
 		out.flush();
 		return null;
 	}
-	// 주석
+	
 	
 	
 }

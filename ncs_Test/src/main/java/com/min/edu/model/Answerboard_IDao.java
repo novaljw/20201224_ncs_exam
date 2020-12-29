@@ -9,4 +9,14 @@ public interface Answerboard_IDao {
 
 	public List<Answerboard_Dto> userBoardList();
 	
+	public Answerboard_Dto getOneBoard(String seq);
+	
+	public boolean modifyBoard(Answerboard_Dto dto);
+	
+	public boolean delflagBoard(Map<String, String[]> map);
+	
+	public boolean replyBoardUp(Answerboard_Dto dto);
+	public boolean replyBoardIn(Answerboard_Dto dto);
+	
+	public boolean writeBoard(Answerboard_Dto dto);
 }
